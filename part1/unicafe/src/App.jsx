@@ -2,17 +2,32 @@ import { useState } from "react";
 
 const Header = ({heading}) => <h1>{heading}</h1>
 
-const Statisticline = ({text, value}) => <p>{text} {value}</p>
+const Statisticline = ({text, value}) => {
+  return(
+    <tr>
+      <td>
+        {text} 
+      </td>
+      <td>
+        {value}
+      </td>
+    </tr>
+  )
+}
 
 const Statistics = ({stats}) => {
   return(
     <div>
-      <Statisticline text="good" value={stats.good}/>
-      <Statisticline text="neutral" value={stats.neutral}/>
-      <Statisticline text="bad" value={stats.bad}/>
-      <Statisticline text="all" value={stats.total}/>
-      <Statisticline text="average" value={(stats.good - stats.bad)/ stats.total}/>
-      <Statisticline text="positive" value={(stats.good / stats.total) * 100 + "%"}/>
+      <table>
+        <tbody>
+            <Statisticline text="good" value={stats.good}/>          
+            <Statisticline text="neutral" value={stats.neutral}/>          
+            <Statisticline text="bad" value={stats.bad}/>          
+            <Statisticline text="all" value={stats.total}/>                      
+            <Statisticline text="average" value={(stats.good - stats.bad)/ stats.total}/>                      
+            <Statisticline text="positive" value={(stats.good / stats.total) * 100 + " %"}/>
+        </tbody>
+      </table>
     </div>
   );
 }
