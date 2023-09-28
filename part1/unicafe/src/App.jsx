@@ -49,7 +49,7 @@ const App = () => {
       <button onClick={handleBad}>bad</button>
 
       <Header heading="statistics"/>
-      <Statistics stats={stats}/>
+      {(total === 0) ? <p>No feedback given</p>: <Statistics stats={stats}/>}
     </div>
   )
 }
