@@ -14,16 +14,14 @@ const Content = ({parts}) => {
 
 const Total = ({parts}) => {
 
-  let sum = 0;
-
-  parts.forEach(part => sum += part.exercises);
+  const total = parts.reduce((sum, part) => sum + part.exercises,0);
 
   return(
     <b>
-      total of {sum} exercises
+      total of {total} exercises
     </b>
   );
-}
+} 
 
 const Course = ({course}) => {
   return(
