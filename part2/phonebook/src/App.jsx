@@ -42,6 +42,9 @@ const App = () => {
       }
 
       setPersons(persons.concat(personObject));
+
+      axios.post("http://localhost:3001/persons",personObject)
+      .then(res => console.log(res.data));
     }
     else {
       alert(`${newName} is already added to the phonebook`);
