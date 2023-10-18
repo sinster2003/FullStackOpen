@@ -16,4 +16,9 @@ const deletePhone = (id) => {
     return axios.delete(`${baseURL}/${id}`);
 }
 
-export { getPhone, createPhone, deletePhone };
+const updatePhone = (id, phoneObject) => {
+    const request = axios.put(`${baseURL}/${id}`,phoneObject);
+    return request.then(res => res.data)
+}
+
+export { getPhone, createPhone, deletePhone, updatePhone };

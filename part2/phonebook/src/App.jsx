@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { getPhone, createPhone, deletePhone } from "./services/phonebook";
+import { getPhone, createPhone, deletePhone, updatePhone } from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -37,23 +37,26 @@ const App = () => {
   const handlePhone = (event) => {
     event.preventDefault();
 
+    const personObject = {
+      name : newName,
+      phone: phoneNumber,
+      id: persons.length + 1
+    }
+
     const isPerson = persons.find(person => person.name === newName);
 
     if (!isPerson) {
-
-      const personObject = {
-        name : newName,
-        phone: phoneNumber,
-        id: persons.length + 1
-      }
-
       setPersons(persons.concat(personObject));
-
       createPhone(personObject)
-      .then(res => console.log(res))
     }
     else {
-      alert(`${newName} is already added to the phonebook`);
+      if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
+        updatePhone(isPerson.id, personObject)
+        .then(res => setPersons(persons.map(person => 
+            person.id !== isPerson.id ? person: res
+          ))
+        );
+      }
     }
     
     setNewName("");
