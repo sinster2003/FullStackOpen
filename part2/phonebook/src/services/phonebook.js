@@ -12,4 +12,8 @@ const createPhone = (phoneObject) => {
     return request.then(res => res.data);
 }
 
-export { getPhone, createPhone };
+const deletePhone = (id) => {
+    return axios.delete(`${baseURL}/${id}`);
+}
+
+export { getPhone, createPhone, deletePhone };

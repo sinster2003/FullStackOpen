@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { getPhone, createPhone } from "./services/phonebook";
+import { getPhone, createPhone, deletePhone } from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -26,6 +25,13 @@ const App = () => {
 
   const handleFilter = (event) => {
     setFilterValue(event.target.value);
+  }
+
+  const handleDelete = (id) => {
+    deletePhone(id)
+    .then(setPersons(
+      persons.filter(person => person.id !== id)
+    ))
   }
 
   const handlePhone = (event) => {
@@ -77,7 +83,7 @@ const App = () => {
       
       <h2>Numbers</h2>
       
-      <Persons personsToShow={personsToShow}/>
+      <Persons personsToShow={personsToShow} handleDelete={handleDelete}/>
     </div>
   )
 }
