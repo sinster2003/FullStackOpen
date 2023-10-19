@@ -3,12 +3,14 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import { getPhone, createPhone, deletePhone, updatePhone } from "./services/phonebook";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [filterValue, setFilterValue] = useState("");
+  const [notify, setNotify] = useState(null);
 
   useEffect(() => {
     getPhone()
@@ -48,14 +50,21 @@ const App = () => {
     if (!isPerson) {
       setPersons(persons.concat(personObject));
       createPhone(personObject)
+      .then(res => setNotify(`Added ${res.name}`))
+      .then(setTimeout(() => {
+        setNotify(null);
+      }, 5000))
     }
     else {
       if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
         updatePhone(isPerson.id, personObject)
         .then(res => setPersons(persons.map(person => 
             person.id !== isPerson.id ? person: res
-          ))
-        );
+          )))
+        .then(setNotify(`Updated ${newName}`))
+        .then(setTimeout(() => {
+          setNotify(null);
+        }, 5000))
       }
     }
     
@@ -71,6 +80,8 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+
+      <Notification notify={notify}/>
 
       <Filter filter={filterValue} handleFilter={handleFilter}/>
 
