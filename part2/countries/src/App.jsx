@@ -25,7 +25,7 @@ const App = () => {
       {
         (filteredCountries.length > 10) ? 
         <p>Too many matches, specify another filter</p>:
-        <Country countries={filteredCountries}/>
+        <Country countries={filteredCountries} filter={setCountryValue}/>
       }
     </div>
   );
