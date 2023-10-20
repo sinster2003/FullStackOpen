@@ -13,12 +13,12 @@ const CountryCard = ({data}) => {
       .catch(error => {
         console.log(`Weather of ${data.capital[0]} not found`)
       })
-    },[])
+    }, [])
 
     if(!weather) {
         return "Loading...";
     }
-    
+
     return(
         <div>
             <h1>{data.name.common}</h1>
