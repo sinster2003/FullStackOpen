@@ -11,6 +11,7 @@ const App = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const [notify, setNotify] = useState(null);
+  const [error,setError] = useState(false);
 
   useEffect(() => {
     getPhone()
@@ -51,9 +52,7 @@ const App = () => {
       setPersons(persons.concat(personObject));
       createPhone(personObject)
       .then(res => setNotify(`Added ${res.name}`))
-      .then(setTimeout(() => {
-        setNotify(null);
-      }, 5000))
+      .then(setError(false))
     }
     else {
       if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
@@ -62,12 +61,19 @@ const App = () => {
             person.id !== isPerson.id ? person: res
           )))
         .then(setNotify(`Updated ${newName}`))
-        .then(setTimeout(() => {
-          setNotify(null);
-        }, 5000))
+        .then(setError(false))
+        .catch((error) => {
+          setNotify(`Information of ${newName} has already been removed from the server`);
+          setError(true);
+          setPersons(persons.filter(person => person.id !== isPerson.id));
+        })
       }
     }
-    
+
+    setTimeout(() => {
+      setNotify(null);
+    }, 5000);
+
     setNewName("");
     setPhoneNumber("");
   }
@@ -81,7 +87,7 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
 
-      <Notification notify={notify}/>
+      <Notification notify={notify} error={error}/>
 
       <Filter filter={filterValue} handleFilter={handleFilter}/>
 

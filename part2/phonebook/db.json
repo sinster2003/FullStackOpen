@@ -2,7 +2,7 @@
   "persons": [
     {
       "name": "Arto Hellas",
-      "phone": "040-536728",
+      "phone": "65329349093",
       "id": 1
     },
     {
@@ -12,18 +12,13 @@
     },
     {
       "name": "Dan Abramov",
-      "phone": "+53874679377",
+      "phone": "39-44-5323",
       "id": 3
     },
     {
       "name": "Mary Poppendieck",
       "phone": "39-23-6423122",
       "id": 4
-    },
-    {
-      "name": "SIndhur",
-      "phone": "43850943",
-      "id": 5
     }
   ]
 }
