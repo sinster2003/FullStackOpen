@@ -22,6 +22,11 @@ let persons = [
       "id": 4,
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
+    },
+    { 
+      "id": 5,
+      "name": "John Doe", 
+      "number": "39-23-6424783"
     }
 ]
 
@@ -39,6 +44,19 @@ app.get("/info", (request,response) => {
         <p>${new Date().toString()}</p>
     `)
 }) 
+
+app.get("/api/persons/:id", (request,response) => {
+  const id = Number(request.params.id);
+
+  const phoneInfo = persons.find(person => person.id === id);
+
+  if(phoneInfo) {
+    response.json(phoneInfo);
+  }
+  else {
+    response.status(404).end();
+  }
+})
 
 const PORT = 3001;
 app.listen(PORT, () => {
