@@ -9,6 +9,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors()); // allows cross origin requests
+app.use(express.static("dist")); // serves static files
 
 /* Logs the data sent in HTTP post requests*/
 

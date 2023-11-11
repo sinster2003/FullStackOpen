@@ -1,7 +1,8 @@
 import axios from "axios";
 
 /* const baseURL = "http://localhost:3001/persons"; ---> json server */
-const baseURL = "http://localhost:3001/api/persons"
+/* const baseURL = "http://localhost:3001/api/persons" ---> local development*/
+const baseURL = "/api/persons";
 
 const getPhone = () => {
     const request = axios.get(`${baseURL}`);
