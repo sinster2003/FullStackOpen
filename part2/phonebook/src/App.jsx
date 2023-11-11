@@ -37,13 +37,18 @@ const App = () => {
     ))
   }
 
+  const generateId = () => {
+    const maxId = Math.max(...persons.map(person => person.id));
+    return maxId + 1;
+  }
+
   const handlePhone = (event) => {
     event.preventDefault();
 
     const personObject = {
       name : newName,
-      phone: phoneNumber,
-      id: persons.length + 1
+      number: phoneNumber,
+      id: generateId()
     }
 
     const isPerson = persons.find(person => person.name === newName);
