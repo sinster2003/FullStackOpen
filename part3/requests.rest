@@ -11,3 +11,6 @@ Content-Type: application/json
 
 ###
 GET  http://localhost:3001/api/persons
+
+###
+GET https://fullstack-phonebook-app-nz40.onrender.com/api/persons
