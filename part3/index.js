@@ -117,7 +117,7 @@ app.post("/api/persons", (request,response) => {
 
   persons = persons.concat(personIdObject);
 
-  response.json(personIdObject);
+  response.status(201).json(personIdObject);
 })
 
 const unknownEndpoint = (request,response) => {
