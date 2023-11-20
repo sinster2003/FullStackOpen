@@ -54,10 +54,16 @@ const App = () => {
     const isPerson = persons.find(person => person.name === newName);
 
     if (!isPerson) {
-      setPersons(persons.concat(personObject));
       createPhone(personObject)
-      .then(res => setNotify(`Added ${res.name}`))
-      .then(setError(false))
+      .then(res => {
+        setError(false)
+        setNotify(`Added ${res.name}`)
+        setPersons(persons.concat(personObject));
+      })
+      .catch(error => {
+        setError(true);
+        setNotify(error.response.data.error)
+      })
     }
     else {
       if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)) {
