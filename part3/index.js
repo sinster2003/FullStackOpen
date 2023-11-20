@@ -98,7 +98,7 @@ app.get("/api/persons/:id", (request,response) => {
   }
 })
 
-app.delete("/api/persons/:id", (request,response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
 
   /*
   const id = Number(request.params.id);
@@ -114,9 +114,7 @@ app.delete("/api/persons/:id", (request,response) => {
   .then(() => {
     response.status(204).end();
   })
-  .catch(error => {
-    response.status(400).json({ error: "ID is malformatted" })
-  }) 
+  .catch(error => next(error)) 
 })
 
 app.post("/api/persons", (request,response) => {
@@ -172,6 +170,16 @@ const unknownEndpoint = (request,response) => {
 }
 
 app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  if(error.name === "CastError") {
+    return response.status(400).json({ error: "malformatted id" });
+  }
+
+  next(error);
+}
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
