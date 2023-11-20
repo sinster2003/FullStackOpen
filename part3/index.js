@@ -23,38 +23,6 @@ morgan.token("body", (request,response) => {
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"));
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    },
-    { 
-      "id": 5,
-      "name": "John Doe", 
-      "number": "39-23-6424783"
-    }
-]
-
-const generateId = () => {
-  return Math.floor(Math.random() * 10000000);
-}
-
 app.get("/", (request,response) => {
     response.send("<h1>Phonebook Backend</h1>")
 }) 
@@ -79,34 +47,42 @@ app.get("/api/persons", (request,response) => {
 })
 
 app.get("/info", (request,response) => {
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
-        <p>${new Date().toString()}</p>
-    `)
+
+  Person.find({})
+  .then(persons => {
+    if(persons) {
+      response.send(`
+      <p>Phonebook has info for ${persons.length} people</p>
+      <p>${new Date().toString()}</p>
+      `)
+    }
+    else {
+      response.status(404).json({ error: "Data not found" })
+    }
+  })
+  .catch(error => {
+    response.status(500).end();
+  }) 
+
 }) 
 
-app.get("/api/persons/:id", (request,response) => {
-  const id = Number(request.params.id);
+app.get("/api/persons/:id", (request, response, next) => {
 
-  const phoneInfo = persons.find(person => person.id === id);
+  const id = request.params.id;
 
-  if(phoneInfo) {
-    response.json(phoneInfo);
-  }
-  else {
-    response.status(404).end();
-  }
+  Person.findById(id)
+  .then(person => {
+    if(person) {
+      response.status(200).json(person);
+    }
+    else {
+      response.status(404).json({ error: "Data not found" });
+    }
+  })
+  .catch(error => next(error))
 })
 
 app.delete("/api/persons/:id", (request, response, next) => {
-
-  /*
-  const id = Number(request.params.id);
-
-  persons = persons.filter(person => person.id !== id);
-
-  response.status(204).end();
-  */
 
   const id = request.params.id;
 
@@ -131,22 +107,6 @@ app.post("/api/persons", (request,response) => {
       error: "Number is missing"
     })
   }
-
-  const isPerson = persons.find(entry => entry.name === person.name);
-
-  if(isPerson) {
-    return response.status(400).json({
-      error: "Name must be unique"
-    })
-  }
-
-  /* 
-  const personIdObject = {id: generateId(), ...person};
-
-  persons = persons.concat(personIdObject);
-
-  response.status(201).json(personIdObject);
-  */
 
   const personIdObject = new Person({
     name: person.name,

@@ -14,3 +14,6 @@ GET  http://localhost:3001/api/persons
 
 ###
 GET https://fullstack-phonebook-app-nz40.onrender.com/api/persons
+
+###
+GET http://localhost:3001/api/persons/655b52c588f38743468ea2db
