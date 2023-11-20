@@ -2,8 +2,9 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
 dotenv.config(); // to activate and configure process.env
+
+const Person = require("./models/phonebook");
 
 const app = express();
 
@@ -59,7 +60,19 @@ app.get("/", (request,response) => {
 }) 
 
 app.get("/api/persons", (request,response) => {
-    response.json(persons);
+    // response.json(persons);
+
+    Person.find({})
+    .then(persons => {
+      if(persons) {
+        response.status(200).json(persons);
+      }
+      else {
+        response.status(404).json({
+          error: "Phone Book details not found..."
+        });
+      }
+    })
 })
 
 app.get("/info", (request,response) => {
