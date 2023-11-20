@@ -125,12 +125,25 @@ app.post("/api/persons", (request,response) => {
       error: "Name must be unique"
     })
   }
- 
+
+  /* 
   const personIdObject = {id: generateId(), ...person};
 
   persons = persons.concat(personIdObject);
 
   response.status(201).json(personIdObject);
+  */
+
+  const personIdObject = new Person({
+    name: person.name,
+    number: person.number
+  })
+
+  personIdObject.save()
+  .then(person => {
+    response.status(201).json(person);
+  })
+  
 })
 
 const unknownEndpoint = (request,response) => {

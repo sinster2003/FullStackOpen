@@ -19,6 +19,7 @@ phoneSchema.set("toJSON", {
         reqObject.id = reqObject._id.toString();
 
         delete reqObject._id;
+        delete reqObject.__v;
     }
 })
 
