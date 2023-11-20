@@ -73,6 +73,9 @@ app.get("/api/persons", (request,response) => {
         });
       }
     })
+    .catch(error => {
+      response.status(500).end();
+    })
 })
 
 app.get("/info", (request,response) => {
@@ -111,6 +114,9 @@ app.delete("/api/persons/:id", (request,response) => {
   .then(() => {
     response.status(204).end();
   })
+  .catch(error => {
+    response.status(400).json({ error: "ID is malformatted" })
+  }) 
 })
 
 app.post("/api/persons", (request,response) => {
@@ -152,6 +158,9 @@ app.post("/api/persons", (request,response) => {
   personIdObject.save()
   .then(person => {
     response.status(201).json(person);
+  })
+  .catch(error => {
+    response.status(500).end();
   })
 
 })
