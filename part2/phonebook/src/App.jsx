@@ -74,9 +74,16 @@ const App = () => {
         .then(setNotify(`Updated ${newName}`))
         .then(setError(false))
         .catch((error) => {
-          setNotify(`Information of ${newName} has already been removed from the server`);
-          setError(true);
-          setPersons(persons.filter(person => person.id !== isPerson.id));
+          if(error.response?.data?.error?.includes("Validation failed")) {
+            setNotify(error.response.data.error);
+            setError(true)
+          }
+          else {
+            setNotify(`Information of ${newName} has already been removed from the server`);
+            setError(true);
+            setPersons(persons.filter(person => person.id !== isPerson.id));
+          }
+          
         })
       }
     }
