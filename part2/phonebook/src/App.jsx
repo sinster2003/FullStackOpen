@@ -58,7 +58,7 @@ const App = () => {
       .then(res => {
         setError(false)
         setNotify(`Added ${res.name}`)
-        setPersons(persons.concat(personObject));
+        setPersons(persons.concat(res));
       })
       .catch(error => {
         setError(true);
