@@ -1,0 +1,13 @@
+POST "http://127.0.0.1:3003/api/blogs"
+
+Content-Type: "application/json"
+
+{
+  "title": "blogs of fsopen",
+  "author": "John Doe",
+  "url": "https://example.com",
+  "likes": 78
+}
+
+###
+GET "http://127.0.0.1:3003/api/blogs"
