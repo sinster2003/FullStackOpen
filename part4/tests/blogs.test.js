@@ -131,6 +131,43 @@ describe("testing the blog routes", () => {
 
         expect(savedBlog.body.likes).toBe(0);
     })
+
+    test("testing invalid post requests", async () => {
+        const newBlog = {
+            author: "Sin",
+        }
+
+        const newBlogWithNoTitle = {
+            author: "Sin",
+            url: "https://example.com"
+        }
+
+        const newBlogWithNoUrl = {
+            title: "Usage of prisma for Postgress",
+            author: "Sin",
+        }
+        
+        await api.post("/api/blogs")
+        .send(newBlog)
+        .expect(400)
+        .expect("Content-type", /application\/json/)
+
+        await api.post("/api/blogs")
+        .send(newBlogWithNoTitle)
+        .expect(400)
+        .expect("Content-type", /application\/json/)
+
+        await api.post("/api/blogs")
+        .send(newBlogWithNoUrl)
+        .expect(400)
+        .expect("Content-type", /application\/json/)
+
+        const result = await api.get("/api/blogs")
+        .expect(200)
+        .expect("Content-type", /application\/json/)
+
+        expect(result.body).toHaveLength(initialBlogs.length);
+    })
 })
 
 afterAll(async () => {
