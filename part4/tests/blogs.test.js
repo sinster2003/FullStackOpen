@@ -77,6 +77,14 @@ describe("testing blog get request", () => {
         console.log(result.body);
         expect(result.body).toHaveLength(initialBlogs.length)
     })
+
+    test("checking unique identifier format", async () => {
+        const result = await api.get("/api/blogs")
+        .expect(200)
+        .expect("Content-type", /application\/json/)
+
+        expect(result.body[0].id).toBeDefined();
+    })
 })
 
 afterAll(async () => {
