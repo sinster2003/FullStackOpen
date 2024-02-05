@@ -110,6 +110,27 @@ describe("testing the blog routes", () => {
 
         expect({...newBlog, id: savedBlog.body.id}).toEqual(savedBlog.body);
     })
+
+    test("testing likes default to zero", async () => {
+        const newBlog = {
+            title: "React Best Practice",
+            author: "Sin",
+            url: "https://reactbestpractices.com/",
+        }
+        
+        const savedBlog = await api.post("/api/blogs")
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-type", /application\/json/)
+
+        const result = await api.get("/api/blogs")
+        .expect(200)
+        .expect("Content-type", /application\/json/)
+
+        expect(result.body).toHaveLength(initialBlogs.length + 1);
+
+        expect(savedBlog.body.likes).toBe(0);
+    })
 })
 
 afterAll(async () => {
