@@ -68,7 +68,7 @@ beforeEach(async () => {
     console.log("done");
 })
 
-describe("testing blog get request", () => {
+describe("testing the blog routes", () => {
     test("testing http get requests", async () => {
         const result = await api.get("/api/blogs")
         .expect(200)
@@ -84,6 +84,31 @@ describe("testing blog get request", () => {
         .expect("Content-type", /application\/json/)
 
         expect(result.body[0].id).toBeDefined();
+    })
+
+    test("testing http post request", async () => {
+        const newBlog = {
+            title: "React Best Practice",
+            author: "Sin",
+            url: "https://reactbestpractices.com/",
+            likes: 2
+        }
+        
+        const savedBlog = await api.post("/api/blogs")
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-type", /application\/json/)
+
+        const result = await api.get("/api/blogs")
+        .expect(200)
+        .expect("Content-type", /application\/json/)
+
+        expect(result.body).toHaveLength(initialBlogs.length + 1);
+        
+        const titleList = result.body.map(blog => blog.title);
+        expect(titleList).toContain(newBlog.title);
+
+        expect({...newBlog, id: savedBlog.body.id}).toEqual(savedBlog.body);
     })
 })
 
