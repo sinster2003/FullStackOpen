@@ -2,62 +2,9 @@ const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blogs");
 const { default: mongoose } = require("mongoose");
+const { initialBlogs, nonExistingId, blogsInDB } = require("./test_helper");
 
 const api = supertest(app); // superagent object
-
-const initialBlogs = [
-    {
-      _id: "5a422a851b54a676234d17f7",
-      title: "React patterns",
-      author: "Michael Chan",
-      url: "https://reactpatterns.com/",
-      likes: 7,
-      __v: 0,
-    },
-    {
-      _id: "5a422aa71b54a676234d17f8",
-      title: "Go To Statement Considered Harmful",
-      author: "Edsger W. Dijkstra",
-      url:
-        "http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html",
-      likes: 5,
-      __v: 0,
-    },
-    {
-      _id: "5a422b3a1b54a676234d17f9",
-      title: "Canonical string reduction",
-      author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
-      likes: 12,
-      __v: 0,
-    },
-    {
-      _id: "5a422b891b54a676234d17fa",
-      title: "First class tests",
-      author: "Robert C. Martin",
-      url:
-        "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
-      likes: 10,
-      __v: 0,
-    },
-    {
-      _id: "5a422ba71b54a676234d17fb",
-      title: "TDD harms architecture",
-      author: "Robert C. Martin",
-      url:
-        "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
-      likes: 0,
-      __v: 0,
-    },
-    {
-      _id: "5a422bc61b54a676234d17fc",
-      title: "Type wars",
-      author: "Robert C. Martin",
-      url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
-      likes: 2,
-      __v: 0,
-    },
-  ];
 
 beforeEach(async () => {
     await Blog.deleteMany({});
@@ -99,13 +46,11 @@ describe("testing the blog routes", () => {
         .expect(201)
         .expect("Content-type", /application\/json/)
 
-        const result = await api.get("/api/blogs")
-        .expect(200)
-        .expect("Content-type", /application\/json/)
+        const result = await blogsInDB();
 
-        expect(result.body).toHaveLength(initialBlogs.length + 1);
+        expect(result).toHaveLength(initialBlogs.length + 1);
         
-        const titleList = result.body.map(blog => blog.title);
+        const titleList = result.map(blog => blog.title);
         expect(titleList).toContain(newBlog.title);
 
         expect({...newBlog, id: savedBlog.body.id}).toEqual(savedBlog.body);
@@ -123,11 +68,9 @@ describe("testing the blog routes", () => {
         .expect(201)
         .expect("Content-type", /application\/json/)
 
-        const result = await api.get("/api/blogs")
-        .expect(200)
-        .expect("Content-type", /application\/json/)
+        const result = await blogsInDB();
 
-        expect(result.body).toHaveLength(initialBlogs.length + 1);
+        expect(result).toHaveLength(initialBlogs.length + 1);
 
         expect(savedBlog.body.likes).toBe(0);
     })
@@ -162,11 +105,47 @@ describe("testing the blog routes", () => {
         .expect(400)
         .expect("Content-type", /application\/json/)
 
-        const result = await api.get("/api/blogs")
-        .expect(200)
+        const result = await blogsInDB();
+
+        expect(result).toHaveLength(initialBlogs.length);
+    })
+
+    test("testing deleting a blog", async () => {
+        const blogsAtStart = await blogsInDB();
+        const blogtoBeDeleted = blogsAtStart[0];
+
+        await api.delete(`/api/blogs/${blogtoBeDeleted.id}`)
+        .expect(204)
+
+        const blogsAtEnd = await blogsInDB();
+
+        expect(blogsAtEnd.length).toBe(initialBlogs.length - 1);
+
+        const titles = blogsAtEnd.map(blog => blog.title);
+
+        expect(titles).not.toContain(blogtoBeDeleted.title);
+    })
+
+    test("testing deleting a blog with invalid id", async () => {
+        await api.delete(`/api/blogs/5a422a851b54a67`)
+        .expect(400)
         .expect("Content-type", /application\/json/)
 
-        expect(result.body).toHaveLength(initialBlogs.length);
+        const blogsAtEnd = await blogsInDB();
+
+        expect(blogsAtEnd.length).toBe(initialBlogs.length);
+    })
+
+    test("testing deleting a blog with non existing id", async () => {
+        const nonExisting_Id = await nonExistingId();
+        
+        await api.delete(`/api/blogs/${nonExisting_Id}`)
+        .expect(404)
+        .expect("Content-type", /application\/json/)
+
+        const blogsAtEnd = await blogsInDB();
+
+        expect(blogsAtEnd.length).toBe(initialBlogs.length);
     })
 })
 
