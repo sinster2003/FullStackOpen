@@ -147,6 +147,56 @@ describe("testing the blog routes", () => {
 
         expect(blogsAtEnd.length).toBe(initialBlogs.length);
     })
+
+    test("testing the updating of likes in the blog", async () => {
+        const blogs = await blogsInDB();
+        const blogToBeUpdated = blogs[0];
+
+        const updatedBlog = await api.put(`/api/blogs/${blogToBeUpdated.id}`)
+        .send({ likes: 50 })
+        .expect(200)
+        .expect("Content-Type", /application\/json/)
+
+        const blogsAtEnd = await blogsInDB();
+
+        expect(blogsAtEnd).toHaveLength(blogs.length);
+
+        expect(blogsAtEnd[0]).toEqual({
+            ...updatedBlog.body,
+            likes: 50
+        });
+    })
+
+    test("testing the updating of likes in the blog when wrong id is passed", async () => {
+        const updatedBlog = await api.put("/api/blogs/gh78ghyusdbwyug7")
+        .send({ likes: 99 })
+        .expect(400)
+        .expect("Content-Type", /application\/json/)
+
+        expect(updatedBlog.body).toEqual({ error: "malformatted id" });
+    })
+
+    test("testing the updating of likes in the blog when non existing id is passed", async () => {
+        const id = await nonExistingId();
+
+        await api.put(`/api/blogs/${id}`)
+        .send({ likes: 50 })
+        .expect(404)
+        .expect("Content-Type", /application\/json/)
+    })
+
+    test("testing the updating of likes in the blog with invalid inputs", async () => {
+        const blogsAtStart = await blogsInDB();
+        
+        const updatedBlog = await api.put(`/api/blogs/${blogsAtStart[0].id}`)
+        .send({ likes: -1 })
+        .expect(400)
+        .expect("Content-Type", /application\/json/)
+
+        expect(updatedBlog.body).toEqual({
+            message: "Invalid input"
+        })
+    })
 })
 
 afterAll(async () => {
