@@ -10,7 +10,15 @@ userRouter.get("/", async (req, res) => {
 userRouter.post("/", async (req, res) => {
     const { username, name, password } = req.body;
 
-    if(password?.length < 6) {
+    if(!username || !name) {
+        return res.status(400).json({ message: "Username and Name are mandatory." });
+    }
+
+    if(username.length < 3 || name.length < 3) {
+        return res.status(400).json({ message: "Username and Name must be atleast 3 characters long." });
+    }
+ 
+    if(!password || (password && password.length < 6)) {
         return res.status(400).json({ message: "Invalid Inputs" });
     }
 
